@@ -1,9 +1,10 @@
-import logo from './logo.svg';
+
 import './App.css';
-import TicketsBoard from './javascript/components/tickets_components/TicketsBoard'
+// import TicketsBoard from './javascript/components/tickets_components/TicketsBoard'
+import Workspace from './javascript/components/workspace/Workspace'
 function App() {
   return (
-    <TicketsBoard></TicketsBoard>
+    <Workspace></Workspace>
   );
 }
 
