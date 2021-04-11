@@ -14,6 +14,12 @@ import { withStyles } from '@material-ui/core/styles';
 // import React, { useState, useEffect, Fragment } from 'react'
 // import Column from './Column'
 // import FormDialog from './FormDialog'
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+
+
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -37,6 +43,7 @@ import TasksList from './TasksList'
 // import CommentIcon from '@material-ui/icons/Comment';
 
 const drawerWidth = 240;
+let taskToDelete = -1
 
 const tasks =
     [{
@@ -232,6 +239,7 @@ export default function Workspace(props) {
     };
     const [notDone, setNotDone] = useState(tasks)
     const [done, setDone] = useState(done_tasks)
+    const [deleteTask, setDeleteTask] = useState(false)
 
     const changeTaskStatus = function (value, id) {
         //If value is true it means that a not done is changed to done. If else the opposite
@@ -244,7 +252,7 @@ export default function Workspace(props) {
             const toBeTransfered = notDoneTemp.filter(el => el.id === id)
             const actuallyToBeTransfered = toBeTransfered[0]
             actuallyToBeTransfered.done = value
-            
+
             //Pushing
             doneTemp.push(actuallyToBeTransfered)
             //Sort them by date
@@ -253,7 +261,7 @@ export default function Workspace(props) {
             //     // to get a value that is either negative, positive, or zero.
             //     return new Date(b.due_date) - new Date(a.due_date);
             //   });
-              
+
             //Deleting from previous list
             notDoneTemp = notDoneTemp.filter(el => el.id !== id)
         } else {
@@ -271,6 +279,20 @@ export default function Workspace(props) {
         setDone(doneTemp)
         setNotDone(notDoneTemp)
     }
+    
+    const handleOpenDeleteTask = function(id) {
+        setDeleteTask(true);
+        taskToDelete = id
+        console.log(taskToDelete)
+    };
+
+    const handleCloseDeleteTask = () => {
+        setDeleteTask(false);
+    };
+    const handleDeleteTask = () => {
+        setDeleteTask(false);
+        console.log(taskToDelete)
+    };
 
     return (
         <ThemeProvider theme={theme}>
@@ -341,12 +363,34 @@ export default function Workspace(props) {
                 <Typography variant="h3" >Proyecto de desarrollo web</Typography>
                 <AddButton>Add new task</AddButton>
                 <Divider />
-                <TasksList tasks={notDone} changeTaskStatus={changeTaskStatus}></TasksList>
+                <TasksList tasks={notDone} handleOpenDeleteTask={handleOpenDeleteTask} changeTaskStatus={changeTaskStatus}></TasksList>
                 <Divider />
                 <Typography variant='h4'>Done</Typography>
                 <TasksList tasks={done} changeTaskStatus={changeTaskStatus}></TasksList>
 
             </main>
+            
+                
+                <Dialog
+                    open={deleteTask}
+                    onClose={handleCloseDeleteTask}
+                >
+                    {/* <DialogTitle id="">{"Sure you wanna delete the task?"}</DialogTitle> */}
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Sure you wanna delete the task?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseDeleteTask} variant="contained" color="primary">
+                            Nah
+                        </Button>
+                        <Button onClick={handleDeleteTask}  variant="contained"color="secondary" autoFocus>
+                            Yeah
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+          
         </ThemeProvider>
 
     )

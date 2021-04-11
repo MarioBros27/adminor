@@ -1,4 +1,4 @@
-import React, {useState}  from 'react';
+import React  from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -38,9 +38,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CheckboxList(props) {
     // console.log(props)
-    const tasks = props.tasks
     const classes = useStyles();
-    const [checked, setChecked] = useState(tasks);
+    // const [checked, setChecked] = useState(tasks);
 
     const handleToggle = (id) => (event) => {
         // const currentIndex = checked.indexOf(value);
@@ -99,7 +98,7 @@ export default function CheckboxList(props) {
 
                         <Divider orientation="vertical" flexItem />
 
-                        <ListItemSecondaryAction>
+                        <ListItemSecondaryAction onClick={()=>props.handleOpenDeleteTask(value)}>
                             <IconButton edge="end" aria-label="comments">
                                 <DeleteIcon></DeleteIcon>
                             </IconButton>
