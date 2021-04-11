@@ -44,6 +44,7 @@ import TasksList from './TasksList'
 
 const drawerWidth = 240;
 let taskToDelete = -1
+let projectToDelete = -1
 
 const tasks =
     [{
@@ -240,6 +241,7 @@ export default function Workspace(props) {
     const [notDone, setNotDone] = useState(tasks)
     const [done, setDone] = useState(done_tasks)
     const [deleteTask, setDeleteTask] = useState(false)
+    const [deleteProject, setDeleteProject] = useState(false)
 
     const changeTaskStatus = function (value, id) {
         //If value is true it means that a not done is changed to done. If else the opposite
@@ -293,6 +295,19 @@ export default function Workspace(props) {
         setDeleteTask(false);
         console.log(taskToDelete)
     };
+    const handleOpenDeleteProject = function(id) {
+        setDeleteProject(true);
+        projectToDelete = id
+        console.log(projectToDelete)
+    };
+
+    const handleCloseDeleteProject = () => {
+        setDeleteProject(false);
+    };
+    const handleDeleteProject = () => {
+        setDeleteProject(false);
+        console.log(projectToDelete)
+    };
 
     return (
         <ThemeProvider theme={theme}>
@@ -341,7 +356,7 @@ export default function Workspace(props) {
                     {['Proyecto de desarrollo web', 'Proyecto comprar limones', 'Compiladores', 'Proyecto recuperacion de agua'].map((text, index) => (
                         <ListItem button key={text}>
                             <ListItemText primary={text} />
-                            <ListItemSecondaryAction>
+                            <ListItemSecondaryAction onClick={()=>handleOpenDeleteProject(index)}>
                                 <IconButton edge="end" aria-label="delete">
                                     <DeleteIcon></DeleteIcon>
                                 </IconButton>
@@ -375,7 +390,6 @@ export default function Workspace(props) {
                     open={deleteTask}
                     onClose={handleCloseDeleteTask}
                 >
-                    {/* <DialogTitle id="">{"Sure you wanna delete the task?"}</DialogTitle> */}
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
                             Sure you wanna delete the task?
@@ -386,6 +400,24 @@ export default function Workspace(props) {
                             Nah
                         </Button>
                         <Button onClick={handleDeleteTask}  variant="contained"color="secondary" autoFocus>
+                            Yeah
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog
+                    open={deleteProject}
+                    onClose={handleCloseDeleteProject}
+                >
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Sure you wanna delete the project?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseDeleteProject} variant="contained" color="primary">
+                            Nah
+                        </Button>
+                        <Button onClick={handleDeleteProject}  variant="contained"color="secondary" autoFocus>
                             Yeah
                         </Button>
                     </DialogActions>
