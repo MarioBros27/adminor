@@ -507,7 +507,7 @@ export default function Workspace(props) {
                         value={projectTitle}
                         onChange={(e) => setProjectTitle(e.target.value)}
                     />
-                    <DatePicker isNew={true}></DatePicker>
+                    <DatePicker ></DatePicker>
                 </DialogContent>
                 <DialogActions>
                     <DeleteButton onClick={handleCloseNewProject} variant="contained" color="secondary">
