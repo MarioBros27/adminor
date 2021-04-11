@@ -34,6 +34,7 @@ import DatePicker from './DatePicker'
 const drawerWidth = 240;
 let taskToDelete = -1
 let projectToDelete = -1
+let dummyNewId = 100
 
 const tasks =
     [{
@@ -88,8 +89,33 @@ const done_tasks =
         done: true
     }]
 
-const starting_projects = ['Proyecto de desarrollo web', 'Proyecto comprar limones', 'Compiladores', 'Proyecto recuperacion de agua'];
-
+// const starting_projects = ['Proyecto de desarrollo web', 'Proyecto comprar limones', 'Compiladores', 'Proyecto recuperacion de agua'];
+const starting_projects = [
+    {
+        id: 0,
+        project_name: 'Proyecto de desarrollo web',
+        user_id: 0,
+        due_date: '9-9-2021'
+    },
+    {
+        id: 1,
+        project_name: 'Proyecto comprar limones',
+        user_id: 0,
+        due_date: '10-9-2021'
+    },
+    {
+        id: 2,
+        project_name: 'Compiladores',
+        user_id: 0,
+        due_date: '11-9-2021'
+    },
+    {
+        id: 3,
+        project_name: 'Proyecto recuperacion de agua',
+        user_id: 0,
+        due_date: '12-9-2021'
+    },
+]
 const StyledAddButton = withStyles({
     root: {
         //   background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
@@ -258,7 +284,7 @@ export default function Workspace(props) {
     const [projectTitle, setProjectTitle] = useState('')
     const [openNewProjectD, setOpenNewProjectD] = useState(false)
     const [projects, setProjects] = useState(starting_projects)
-    const [currentProjectTitle, setCurrentProjectTitle] = useState(projects[0])
+    const [currentProjectTitle, setCurrentProjectTitle] = useState(projects[0].project_name)
 
     const changeTaskStatus = function (value, id) {
         //If value is true it means that a not done is changed to done. If else the opposite
@@ -323,6 +349,7 @@ export default function Workspace(props) {
     };
     const handleDeleteProject = () => {
         setDeleteProject(false);
+        setProjects(projects.filter(el => el.id !== projectToDelete))
         console.log(projectToDelete)
     };
 
@@ -336,15 +363,20 @@ export default function Workspace(props) {
         setProjectTitle('')
     };
     const handleSaveNewProject = () => {
-        setOpenNewProjectD(false)
-        if (projectTitle === '') {
-            projects.push('No name')
-        } else {
-            projects.push(projectTitle)
+        var dummyNewProject = {
+            id: dummyNewId,
+            project_name: 'No name',
+            user_id: 0,
+            due_date: '9-9-2021'
         }
+        
+        if (projectTitle !== '') {
+            dummyNewProject['project_name'] = projectTitle
+        } 
 
-        // setProjects(p)
+        projects.push(dummyNewProject)
         setProjectTitle('')
+        setOpenNewProjectD(false)
     };
     //Edit project name TODO--------------------------------------*******S
     const handleOpenEditProject = function () {
@@ -410,17 +442,18 @@ export default function Workspace(props) {
                 </div>
                 <Divider />
                 <List>
-                    {projects.map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemText primary={text} />
-                            <ListItemSecondaryAction onClick={() => handleOpenDeleteProject(index)}>
-                                <IconButton edge="end" aria-label="delete">
-                                    <DeleteIcon></DeleteIcon>
-                                </IconButton>
-                            </ListItemSecondaryAction>
+                    {projects.map(proj => {
+                        return (
+                            <ListItem button key={proj.id}>
+                                <ListItemText primary={proj.project_name} />
+                                <ListItemSecondaryAction onClick={() => handleOpenDeleteProject(proj.id)}>
+                                    <IconButton edge="end" aria-label="delete">
+                                        <DeleteIcon></DeleteIcon>
+                                    </IconButton>
+                                </ListItemSecondaryAction>
 
-                        </ListItem>
-                    ))}
+                            </ListItem>);
+                    })}
                 </List>
                 <Divider />
                 <StyledAddButton onClick={() => handleOpenNewProject()}>Add new project</StyledAddButton>
@@ -434,10 +467,10 @@ export default function Workspace(props) {
                 <div className={classes.drawerHeader} />
                 <Grid container direction='row' alignItems="flex-start">
                     <Grid item xs={11}  >
-                        
-                <Typography variant="h3" >{currentProjectTitle}</Typography>  
+
+                        <Typography variant="h3" >{currentProjectTitle}</Typography>
                     </Grid>
-                    
+
                     <Grid item container xs={1} >
                         <Button>
                             <EditIcon></EditIcon>
