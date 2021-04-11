@@ -26,6 +26,7 @@ export default function DatePicker(props) {
         console.log(date.getMonth() + 1)
         console.log(date.getFullYear())
         setSelectedDate(date);
+        props.setSelectedDate(date)
     };
 
     return (

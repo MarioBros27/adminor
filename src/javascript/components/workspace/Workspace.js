@@ -31,10 +31,14 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import TasksList from './TasksList'
 import DatePicker from './DatePicker'
 
+import { format } from 'date-fns'
+import { id } from 'date-fns/locale';
+
 const drawerWidth = 240;
 let taskToDelete = -1
 let projectToDelete = -1
 let dummyNewId = 100
+let editingProject = false
 
 const tasks =
     [{
@@ -284,7 +288,8 @@ export default function Workspace(props) {
     const [projectTitle, setProjectTitle] = useState('')
     const [openNewProjectD, setOpenNewProjectD] = useState(false)
     const [projects, setProjects] = useState(starting_projects)
-    const [currentProjectTitle, setCurrentProjectTitle] = useState(projects[0].project_name)
+    const [currentViewingProject, setCurrentViewingProject] = useState(projects[0])
+    // const [currentProjectTitle, setCurrentProjectTitle] = useState(projects[0].project_name)
     const [selectedDate, setSelectedDate] = useState(new Date());
 
     const changeTaskStatus = function (value, id) {
@@ -356,6 +361,7 @@ export default function Workspace(props) {
 
     ///NEw Project
     const handleOpenNewProject = function () {
+        editingProject = false
         setSelectedDate(new Date())
         setOpenNewProjectD(true)
     };
@@ -365,28 +371,49 @@ export default function Workspace(props) {
         setProjectTitle('')
     };
     const handleSaveNewProject = () => {
+        console.log(selectedDate)
         var date = selectedDate.getDate().toString()
         var month = (selectedDate.getMonth() + 1).toString()
         var year = selectedDate.getFullYear().toString()
         var newDate = `${date}-${month}-${year}`
         console.log(newDate)
-        var dummyNewProject = {
-            id: dummyNewId,
-            project_name: 'No name',
-            user_id: 0,
-            due_date: newDate
+        if (!editingProject) {
+
+            var dummyNewProject = {
+                id: dummyNewId,
+                project_name: 'No name',
+                user_id: 0,
+                due_date: newDate
+            }
+
+            if (projectTitle !== '') {
+                dummyNewProject['project_name'] = projectTitle
+            }
+            dummyNewId += 1
+            projects.push(dummyNewProject)
+            
+        } else {
+            currentViewingProject['due_date'] = newDate
+            if (projectTitle !== '') {
+                currentViewingProject['project_name'] = projectTitle
+            }
         }
-        
-        if (projectTitle !== '') {
-            dummyNewProject['project_name'] = projectTitle
-        } 
-        dummyNewId+=1
-        projects.push(dummyNewProject)
         setProjectTitle('')
         setOpenNewProjectD(false)
     };
     //Edit project name TODO--------------------------------------*******S
     const handleOpenEditProject = function () {
+        // setOpenNewProjectD(true)
+        editingProject = true
+        var splitted = currentViewingProject.due_date.split("-")
+        var day = parseInt(splitted[0])
+        var month = parseInt(splitted[1]) - 1
+        var year = parseInt(splitted[2])
+        var date = new Date(year, month, day)
+        // var date = format(new Date(year, month, day), 'yyyy-MM-dd')
+        console.log(date)
+        setSelectedDate(date)
+        setProjectTitle(currentViewingProject.project_name)
         setOpenNewProjectD(true)
     };
 
@@ -475,11 +502,12 @@ export default function Workspace(props) {
                 <Grid container direction='row' alignItems="flex-start">
                     <Grid item xs={11}  >
 
-                        <Typography variant="h3" >{currentProjectTitle}</Typography>
+                        <Typography variant="h3" >{currentViewingProject.project_name}</Typography>
+                        <Typography variant="subtitle1" >{currentViewingProject.due_date}</Typography>
                     </Grid>
 
                     <Grid item container xs={1} >
-                        <Button>
+                        <Button onClick={handleOpenEditProject}>
                             <EditIcon></EditIcon>
                         </Button>
 
@@ -547,7 +575,7 @@ export default function Workspace(props) {
                         value={projectTitle}
                         onChange={(e) => setProjectTitle(e.target.value)}
                     />
-                    <DatePicker selectedDateIn={selectedDate}></DatePicker>
+                    <DatePicker selectedDateIn={selectedDate} setSelectedDate={setSelectedDate}></DatePicker>
                 </DialogContent>
                 <DialogActions>
                     <DeleteButton onClick={handleCloseNewProject} variant="contained" color="secondary">
