@@ -19,6 +19,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 
+import TextField from '@material-ui/core/TextField';
 
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -103,6 +104,28 @@ const StyledAddButton = withStyles({
     root: {
         //   background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
         background: '#52b202',
+        borderRadius: 3,
+        border: 0,
+        height: 48,
+        padding: '0 30px',
+        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    }
+})(Button);
+const SaveButton = withStyles({
+    root: {
+        //   background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+        background: '#52b202',
+        borderRadius: 3,
+        border: 0,
+        height: 48,
+        padding: '0 30px',
+        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    }
+})(Button);
+const DeleteButton = withStyles({
+    root: {
+        //   background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+        background: '#f50057',
         borderRadius: 3,
         border: 0,
         height: 48,
@@ -242,6 +265,8 @@ export default function Workspace(props) {
     const [done, setDone] = useState(done_tasks)
     const [deleteTask, setDeleteTask] = useState(false)
     const [deleteProject, setDeleteProject] = useState(false)
+    const [projectTitle, setProjectTitle] = useState('')
+    const [openNewProjectD, setOpenNewProjectD] = useState(false)
 
     const changeTaskStatus = function (value, id) {
         //If value is true it means that a not done is changed to done. If else the opposite
@@ -281,8 +306,8 @@ export default function Workspace(props) {
         setDone(doneTemp)
         setNotDone(notDoneTemp)
     }
-    
-    const handleOpenDeleteTask = function(id) {
+
+    const handleOpenDeleteTask = function (id) {
         setDeleteTask(true);
         taskToDelete = id
         console.log(taskToDelete)
@@ -295,7 +320,7 @@ export default function Workspace(props) {
         setDeleteTask(false);
         console.log(taskToDelete)
     };
-    const handleOpenDeleteProject = function(id) {
+    const handleOpenDeleteProject = function (id) {
         setDeleteProject(true);
         projectToDelete = id
         console.log(projectToDelete)
@@ -308,6 +333,21 @@ export default function Workspace(props) {
         setDeleteProject(false);
         console.log(projectToDelete)
     };
+
+    ///NEw Project
+    const handleOpenNewProject = function () {
+        setOpenNewProjectD(true)
+    };
+
+    const handleCloseNewProject = () => {
+        setOpenNewProjectD(false)
+        setProjectTitle('')
+    };
+    const handleSaveNewProject = () => {
+        setOpenNewProjectD(false)
+        setProjectTitle('')
+    };
+
 
     return (
         <ThemeProvider theme={theme}>
@@ -356,7 +396,7 @@ export default function Workspace(props) {
                     {['Proyecto de desarrollo web', 'Proyecto comprar limones', 'Compiladores', 'Proyecto recuperacion de agua'].map((text, index) => (
                         <ListItem button key={text}>
                             <ListItemText primary={text} />
-                            <ListItemSecondaryAction onClick={()=>handleOpenDeleteProject(index)}>
+                            <ListItemSecondaryAction onClick={() => handleOpenDeleteProject(index)}>
                                 <IconButton edge="end" aria-label="delete">
                                     <DeleteIcon></DeleteIcon>
                                 </IconButton>
@@ -366,7 +406,7 @@ export default function Workspace(props) {
                     ))}
                 </List>
                 <Divider />
-                <StyledAddButton>Add new project</StyledAddButton>
+                <StyledAddButton onClick={()=>handleOpenNewProject()}>Add new project</StyledAddButton>
                 <LogOutButton>Log Out</LogOutButton>
             </Drawer>
             <main
@@ -384,45 +424,74 @@ export default function Workspace(props) {
                 <TasksList tasks={done} changeTaskStatus={changeTaskStatus}></TasksList>
 
             </main>
-            
-                
-                <Dialog
-                    open={deleteTask}
-                    onClose={handleCloseDeleteTask}
-                >
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Sure you wanna delete the task?
+
+
+            <Dialog
+                open={deleteTask}
+                onClose={handleCloseDeleteTask}
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Sure you wanna delete the task?
                         </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseDeleteTask} variant="contained" color="primary">
-                            Nah
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteTask} variant="contained" color="primary">
+                        Nah
                         </Button>
-                        <Button onClick={handleDeleteTask}  variant="contained"color="secondary" autoFocus>
-                            Yeah
+                    <Button onClick={handleDeleteTask} variant="contained" color="secondary" autoFocus>
+                        Yeah
                         </Button>
-                    </DialogActions>
-                </Dialog>
-                <Dialog
-                    open={deleteProject}
-                    onClose={handleCloseDeleteProject}
-                >
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Sure you wanna delete the project?
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={deleteProject}
+                onClose={handleCloseDeleteProject}
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Sure you wanna delete the project?
                         </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleCloseDeleteProject} variant="contained" color="primary">
-                            Nah
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteProject} variant="contained" color="primary">
+                        Nah
                         </Button>
-                        <Button onClick={handleDeleteProject}  variant="contained"color="secondary" autoFocus>
-                            Yeah
+                    <Button onClick={handleDeleteProject} variant="contained" color="secondary" autoFocus>
+                        Yeah
                         </Button>
-                    </DialogActions>
-                </Dialog>
-          
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={openNewProjectD}
+                onClose={handleCloseNewProject}
+            >
+                <DialogContent>
+                    <TextField
+                        id="title-project-name"
+                        label="Project name"
+                        variant="outlined"
+                        inputProps={{ maxLength: 80 }}
+                        multiline
+                        color="secondary"
+                        rowsMax={2}
+                        value={projectTitle}
+                        onChange={(e) => setProjectTitle(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <DeleteButton onClick={handleCloseNewProject} variant="contained" color="secondary">
+                        Cancel
+                        </DeleteButton>
+                    <StyledAddButton onClick={handleSaveNewProject} variant="contained" color="primary" autoFocus>
+                        Save
+                        </StyledAddButton>
+                </DialogActions>
+            </Dialog>
+
+
+
+
         </ThemeProvider>
 
     )
