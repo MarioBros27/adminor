@@ -31,41 +31,36 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import TasksList from './TasksList'
 import DatePicker from './DatePicker'
 
-import { format } from 'date-fns'
-import { id } from 'date-fns/locale';
 
 const drawerWidth = 240;
 let taskToDelete = -1
 let projectToDelete = -1
 let dummyNewId = 100
 let editingProject = false
+let editingTask = false
 
 const tasks =
     [{
         id: 0,
         title: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur,',
-        description: 'This is a description of something i have to do',
         due_date: '14-7-2021',
         done: false
     },
     {
         id: 1,
         title: 'Ir al banio',
-        description: 'This is a description of something i have to do',
         due_date: '15-7-2021',
         done: false
     },
     {
         id: 2,
         title: 'Tocar la sinfonia de bethoven',
-        description: 'This is a description of something i have to do',
         due_date: '16-7-2021',
         done: false
     },
     {
         id: 3,
         title: 'Nunca he ido al baniodesde que naci',
-        description: 'This is a description of something i have to do',
         due_date: '17-7-2021',
         done: false
     }]
@@ -74,21 +69,18 @@ const done_tasks =
     [{
         id: 4,
         title: 'Comprar papael de banio',
-        description: 'This is a description of something i have to do',
         due_date: '14-7-2021',
         done: true
     },
     {
         id: 5,
         title: 'Conseguir el dinero 1',
-        description: 'This is a description of something i have to do',
         due_date: '15-7-2021',
         done: true
     },
     {
         id: 6,
         title: 'Conseguir el muero',
-        description: 'This is a description of something i have to do',
         due_date: '15-7-2021',
         done: true
     }]
@@ -187,7 +179,6 @@ export default function Workspace(props) {
                 palette: {
                     type: prefersDarkMode ? 'dark' : 'light',
 
-
                 },
             }),
         [prefersDarkMode],
@@ -273,7 +264,6 @@ export default function Workspace(props) {
     const classes = useStyles();
     const [open, setOpen] = useState(isLaptop);
 
-
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -281,17 +271,21 @@ export default function Workspace(props) {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    const [notDone, setNotDone] = useState(tasks)
-    const [done, setDone] = useState(done_tasks)
-    const [deleteTask, setDeleteTask] = useState(false)
-    const [deleteProject, setDeleteProject] = useState(false)
-    const [projectTitle, setProjectTitle] = useState('')
-    const [openNewProjectD, setOpenNewProjectD] = useState(false)
-    const [projects, setProjects] = useState(starting_projects)
-    const [currentViewingProject, setCurrentViewingProject] = useState(projects[0])
-    // const [currentProjectTitle, setCurrentProjectTitle] = useState(projects[0].project_name)
-    const [selectedDate, setSelectedDate] = useState(new Date());
 
+    const [notDone, setNotDone] = useState(tasks)//Objects
+    const [done, setDone] = useState(done_tasks)//Objects
+    const [deleteTask, setDeleteTask] = useState(false)//Dialog delete task boolean
+    const [deleteProject, setDeleteProject] = useState(false)//Dialog delete project boolean
+    const [projectTitle, setProjectTitle] = useState('')//Project title placeholder
+    const [openNewProjectD, setOpenNewProjectD] = useState(false)//Dialog create project boolean 
+    const [taskTitle, setTaskTitle] = useState('')//Task title placeholder
+    const [openNewTaskD, setOpenNewTaskD] = useState(false)//Dialog create task boolean
+    const [projects, setProjects] = useState(starting_projects)//Objects
+    const [currentViewingProject, setCurrentViewingProject] = useState(projects[0])//Selected viewing project object
+    const [currentTask, setCurrentTask] = useState({})//Selected task object that will be modified
+
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    //Functino to change the task status
     const changeTaskStatus = function (value, id) {
         //If value is true it means that a not done is changed to done. If else the opposite
         var doneTemp = done
@@ -330,7 +324,7 @@ export default function Workspace(props) {
         setDone(doneTemp)
         setNotDone(notDoneTemp)
     }
-
+    //Delete task Dialog
     const handleOpenDeleteTask = function (id) {
         setDeleteTask(true);
         taskToDelete = id
@@ -341,9 +335,12 @@ export default function Workspace(props) {
         setDeleteTask(false);
     };
     const handleDeleteTask = () => {
+        //Delete from wherever it is try not done and done
+        setNotDone(notDone.filter(el=> el.id !== taskToDelete))
+        setDone(done.filter(el=> el.id !== taskToDelete))
         setDeleteTask(false);
-        console.log(taskToDelete)
     };
+    //Delete Project DIalog
     const handleOpenDeleteProject = function (id) {
         setDeleteProject(true);
         projectToDelete = id
@@ -391,7 +388,7 @@ export default function Workspace(props) {
             }
             dummyNewId += 1
             projects.push(dummyNewProject)
-            
+
         } else {
             currentViewingProject['due_date'] = newDate
             if (projectTitle !== '') {
@@ -401,9 +398,8 @@ export default function Workspace(props) {
         setProjectTitle('')
         setOpenNewProjectD(false)
     };
-    //Edit project name TODO--------------------------------------*******S
+    //Edit project 
     const handleOpenEditProject = function () {
-        // setOpenNewProjectD(true)
         editingProject = true
         var splitted = currentViewingProject.due_date.split("-")
         var day = parseInt(splitted[0])
@@ -416,21 +412,70 @@ export default function Workspace(props) {
         setProjectTitle(currentViewingProject.project_name)
         setOpenNewProjectD(true)
     };
-
-    const handleCloseEditProject = () => {
-        setOpenNewProjectD(false)
-        setProjectTitle('')
+    ///NEw Task
+    const handleOpenNewTask = function () {
+        editingTask = false
+        setSelectedDate(new Date())
+        setOpenNewTaskD(true)
     };
-    const handleSaveEditProject = () => {
-        setOpenNewProjectD(false)
-        if (projectTitle === '') {
-            projects.push('No name')
-        } else {
-            projects.push(projectTitle)
-        }
 
-        // setProjects(p)
-        setProjectTitle('')
+    const handleCloseNewTask = () => {
+        setOpenNewTaskD(false)
+        setTaskTitle('')
+    };
+    const handleSaveNewTask = () => {
+        console.log(selectedDate)
+        var date = selectedDate.getDate().toString()
+        var month = (selectedDate.getMonth() + 1).toString()
+        var year = selectedDate.getFullYear().toString()
+        var newDate = `${date}-${month}-${year}`
+        console.log(newDate)
+        if (!editingTask) {
+
+            var dummyNewTask = {
+                id: dummyNewId,
+                title: 'No title',
+                due_date: newDate,
+                done: false
+            }
+
+            if (taskTitle !== '') {
+                dummyNewTask['title'] = taskTitle
+            }
+            dummyNewId += 1
+            notDone.push(dummyNewTask)
+
+        } else {
+            //TODO make a variable save the selected task when editTask() is called
+            //Done it's called currentTask
+            //Delete from wherever it is try not done and done
+            setNotDone(notDone.filter(el=> el.id !== setCurrentTask.id))
+            setDone(done.filter(el=> el.id !== setCurrentTask.id))
+            //Push it to not added
+            currentTask['due_date'] = newDate
+            if (taskTitle !== '') {
+                currentTask['title'] = taskTitle
+            }
+            notDone.push(currentTask)
+        }
+        setTaskTitle('')
+        setOpenNewTaskD(false)
+    };
+    //Edit Task 
+    const handleOpenEditTask = function (task) {
+        // setOpenNewProjectD(true)
+        editingTask = true
+        var splitted = task.due_date.split("-")
+        var day = parseInt(splitted[0])
+        var month = parseInt(splitted[1]) - 1
+        var year = parseInt(splitted[2])
+        var date = new Date(year, month, day)
+        // var date = format(new Date(year, month, day), 'yyyy-MM-dd')
+        console.log(date)
+        setSelectedDate(date)
+        setCurrentTask(task)
+        setTaskTitle(task.title)
+        setOpenNewTaskD(true)
     };
     return (
         <ThemeProvider theme={theme}>
@@ -513,12 +558,12 @@ export default function Workspace(props) {
 
                     </Grid>
                 </Grid>
-                <AddButton>Add new task</AddButton>
+                <AddButton onClick={handleOpenNewTask}>Add new task</AddButton>
                 <Divider />
-                <TasksList tasks={notDone} handleOpenDeleteTask={handleOpenDeleteTask} changeTaskStatus={changeTaskStatus}></TasksList>
+                <TasksList tasks={notDone} handleOpenDeleteTask={handleOpenDeleteTask} handleOpenEditTask={handleOpenEditTask} changeTaskStatus={changeTaskStatus}></TasksList>
                 <Divider />
                 <Typography variant='h4'>Done</Typography>
-                <TasksList tasks={done} changeTaskStatus={changeTaskStatus}></TasksList>
+                <TasksList tasks={done} handleOpenDeleteTask={handleOpenDeleteTask} handleOpenEditTask={handleOpenEditTask} changeTaskStatus={changeTaskStatus}></TasksList>
 
             </main>
 
@@ -571,7 +616,7 @@ export default function Workspace(props) {
                         inputProps={{ maxLength: 80 }}
                         multiline
                         color="secondary"
-                        rowsMax={2}
+                        rowsMax={5}
                         value={projectTitle}
                         onChange={(e) => setProjectTitle(e.target.value)}
                     />
@@ -581,9 +626,36 @@ export default function Workspace(props) {
                     <DeleteButton onClick={handleCloseNewProject} variant="contained" color="secondary">
                         Cancel
                         </DeleteButton>
-                    <StyledAddButton onClick={handleSaveNewProject} variant="contained" color="primary" autoFocus>
+                    <SaveButton onClick={handleSaveNewProject} variant="contained" color="primary" autoFocus>
                         Save
-                        </StyledAddButton>
+                        </SaveButton>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={openNewTaskD}
+                onClose={handleCloseNewTask}
+            >
+                <DialogContent>
+                    <TextField
+                        id="title-task-name"
+                        label="Task name"
+                        variant="outlined"
+                        inputProps={{ maxLength: 80 }}
+                        multiline
+                        color="secondary"
+                        rowsMax={5}
+                        value={taskTitle}
+                        onChange={(e) => setTaskTitle(e.target.value)}
+                    />
+                    <DatePicker selectedDateIn={selectedDate} setSelectedDate={setSelectedDate}></DatePicker>
+                </DialogContent>
+                <DialogActions>
+                    <DeleteButton onClick={handleCloseNewTask} variant="contained" color="secondary">
+                        Cancel
+                        </DeleteButton>
+                    <SaveButton onClick={handleSaveNewTask} variant="contained" color="primary" autoFocus>
+                        Save
+                        </SaveButton>
                 </DialogActions>
             </Dialog>
 

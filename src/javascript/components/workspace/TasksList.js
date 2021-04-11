@@ -86,7 +86,7 @@ export default function CheckboxList(props) {
                                     {/* <Link href='#' color="inherit" onClick={() => { console.log(value) }}>
                                         {task.title}
                                     </Link> */}
-                                    <StyledButton onClick={() => { console.log(value) }}>{task.title}</StyledButton>
+                                    <StyledButton onClick={() => props.handleOpenEditTask(task)}>{task.title}</StyledButton>
                                 </Typography>
                             </Grid>
                             <Divider orientation="vertical" flexItem style={{ marginRight: "-1px" }} />
