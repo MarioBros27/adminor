@@ -100,6 +100,8 @@ const done_tasks =
         done: true
     }]
 
+const starting_projects = ['Proyecto de desarrollo web', 'Proyecto comprar limones', 'Compiladores', 'Proyecto recuperacion de agua'];
+
 const StyledAddButton = withStyles({
     root: {
         //   background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
@@ -267,6 +269,7 @@ export default function Workspace(props) {
     const [deleteProject, setDeleteProject] = useState(false)
     const [projectTitle, setProjectTitle] = useState('')
     const [openNewProjectD, setOpenNewProjectD] = useState(false)
+    const [projects, setProjects] = useState(starting_projects)
 
     const changeTaskStatus = function (value, id) {
         //If value is true it means that a not done is changed to done. If else the opposite
@@ -345,6 +348,13 @@ export default function Workspace(props) {
     };
     const handleSaveNewProject = () => {
         setOpenNewProjectD(false)
+        if(projectTitle === ''){
+            projects.push('No name')
+        }else{
+            projects.push(projectTitle)
+        }
+        
+        // setProjects(p)
         setProjectTitle('')
     };
 
@@ -393,7 +403,7 @@ export default function Workspace(props) {
                 </div>
                 <Divider />
                 <List>
-                    {['Proyecto de desarrollo web', 'Proyecto comprar limones', 'Compiladores', 'Proyecto recuperacion de agua'].map((text, index) => (
+                    {projects.map((text, index) => (
                         <ListItem button key={text}>
                             <ListItemText primary={text} />
                             <ListItemSecondaryAction onClick={() => handleOpenDeleteProject(index)}>
