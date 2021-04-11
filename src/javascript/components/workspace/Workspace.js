@@ -234,9 +234,6 @@ export default function Workspace(props) {
     const [done, setDone] = useState(done_tasks)
 
     const changeTaskStatus = function (value, id) {
-
-
-
         //If value is true it means that a not done is changed to done. If else the opposite
         var doneTemp = done
         var notDoneTemp = notDone

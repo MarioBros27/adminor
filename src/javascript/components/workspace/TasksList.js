@@ -13,14 +13,13 @@ import Grid from '@material-ui/core/Grid'
 
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button'
 
 const StyledButton = withStyles({
     root: {
         width: '100%',
         justifyContent: "flex-start",
-        textAlign: 'left'
+        textAlign: 'left',
     },
     label: {
         textTransform: 'none'
@@ -33,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
         marginTop: '20px',
         marginBottom: '20px',
         backgroundColor: theme.palette.background.paper,
+
     },
 }));
 
@@ -68,7 +68,8 @@ export default function CheckboxList(props) {
                 let value = task.id
                 
                 return (
-                    <ListItem key={value} role={undefined} dense >
+                    <ListItem key={value} role={undefined} dense style={{ 
+                        border: '1px solid #999900' }}>
 
                         <ListItemIcon>
 
@@ -79,6 +80,7 @@ export default function CheckboxList(props) {
                             />
 
                         </ListItemIcon>
+                        <Divider orientation="vertical" flexItem style={{ marginLeft: "-20px" }} />
                         <Grid container direction='row' alignItems="center">
                             <Grid item md={10} xs={12}  >
                                 <Typography variant='body1'>
