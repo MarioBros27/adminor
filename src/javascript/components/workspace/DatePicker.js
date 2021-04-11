@@ -1,6 +1,6 @@
 import 'date-fns';
 import { format } from 'date-fns'
-import React from 'react';
+import React,{useState} from 'react';
 import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import {
@@ -11,13 +11,13 @@ import {
 export default function DatePicker(props) {
     // The first commit of Material-UI
     //   const dummyDate = new Date('')
-    const [selectedDate, setSelectedDate] = React.useState(new Date());
-    if (props.date) {
-        //TODO: get sent date and set it to selectedDate
-        const dummyDate = format(new Date(2022, 1, 11), 'yyyy-MM-dd')
-        console.log(dummyDate)
+    const [selectedDate, setSelectedDate] = useState(props.selectedDateIn);
+    // if (props.date) {
+    //     //TODO: get sent date and set it to selectedDate
+    //     const dummyDate = format(new Date(2022, 1, 11), 'yyyy-MM-dd')
+    //     console.log(dummyDate)
 
-    }  
+    // }  
     
 
 

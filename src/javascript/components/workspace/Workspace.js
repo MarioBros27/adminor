@@ -285,6 +285,7 @@ export default function Workspace(props) {
     const [openNewProjectD, setOpenNewProjectD] = useState(false)
     const [projects, setProjects] = useState(starting_projects)
     const [currentProjectTitle, setCurrentProjectTitle] = useState(projects[0].project_name)
+    const [selectedDate, setSelectedDate] = useState(new Date());
 
     const changeTaskStatus = function (value, id) {
         //If value is true it means that a not done is changed to done. If else the opposite
@@ -355,6 +356,7 @@ export default function Workspace(props) {
 
     ///NEw Project
     const handleOpenNewProject = function () {
+        setSelectedDate(new Date())
         setOpenNewProjectD(true)
     };
 
@@ -363,17 +365,22 @@ export default function Workspace(props) {
         setProjectTitle('')
     };
     const handleSaveNewProject = () => {
+        var date = selectedDate.getDate().toString()
+        var month = (selectedDate.getMonth() + 1).toString()
+        var year = selectedDate.getFullYear().toString()
+        var newDate = `${date}-${month}-${year}`
+        console.log(newDate)
         var dummyNewProject = {
             id: dummyNewId,
             project_name: 'No name',
             user_id: 0,
-            due_date: '9-9-2021'
+            due_date: newDate
         }
         
         if (projectTitle !== '') {
             dummyNewProject['project_name'] = projectTitle
         } 
-
+        dummyNewId+=1
         projects.push(dummyNewProject)
         setProjectTitle('')
         setOpenNewProjectD(false)
@@ -540,7 +547,7 @@ export default function Workspace(props) {
                         value={projectTitle}
                         onChange={(e) => setProjectTitle(e.target.value)}
                     />
-                    <DatePicker ></DatePicker>
+                    <DatePicker selectedDateIn={selectedDate}></DatePicker>
                 </DialogContent>
                 <DialogActions>
                     <DeleteButton onClick={handleCloseNewProject} variant="contained" color="secondary">
