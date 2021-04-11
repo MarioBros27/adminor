@@ -1,26 +1,16 @@
-// import Grid from '@material-ui/core/Grid';
-// import React from 'react'
+
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react'
-// import MenuItem from '@material-ui/core/MenuItem';
-// import FormControl from '@material-ui/core/FormControl';
-// import Select from '@material-ui/core/Select';
 import { Typography } from '@material-ui/core';
-// import { Dialog, DialogContent } from '@material-ui/core'
-// import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles';
-// import axios from 'axios'
-// import React, { useState, useEffect, Fragment } from 'react'
-// import Column from './Column'
-// import FormDialog from './FormDialog'
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-
+import EditIcon from '@material-ui/icons/Edit';
 import TextField from '@material-ui/core/TextField';
-
+import Grid from '@material-ui/core/Grid'
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -35,13 +25,11 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
-// import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import TasksList from './TasksList'
-
-// import CommentIcon from '@material-ui/icons/Comment';
+import DatePicker from './DatePicker'
 
 const drawerWidth = 240;
 let taskToDelete = -1
@@ -270,6 +258,7 @@ export default function Workspace(props) {
     const [projectTitle, setProjectTitle] = useState('')
     const [openNewProjectD, setOpenNewProjectD] = useState(false)
     const [projects, setProjects] = useState(starting_projects)
+    const [currentProjectTitle, setCurrentProjectTitle] = useState(projects[0])
 
     const changeTaskStatus = function (value, id) {
         //If value is true it means that a not done is changed to done. If else the opposite
@@ -348,17 +337,35 @@ export default function Workspace(props) {
     };
     const handleSaveNewProject = () => {
         setOpenNewProjectD(false)
-        if(projectTitle === ''){
+        if (projectTitle === '') {
             projects.push('No name')
-        }else{
+        } else {
             projects.push(projectTitle)
         }
-        
+
         // setProjects(p)
         setProjectTitle('')
     };
+    //Edit project name TODO--------------------------------------*******S
+    const handleOpenEditProject = function () {
+        setOpenNewProjectD(true)
+    };
 
+    const handleCloseEditProject = () => {
+        setOpenNewProjectD(false)
+        setProjectTitle('')
+    };
+    const handleSaveEditProject = () => {
+        setOpenNewProjectD(false)
+        if (projectTitle === '') {
+            projects.push('No name')
+        } else {
+            projects.push(projectTitle)
+        }
 
+        // setProjects(p)
+        setProjectTitle('')
+    };
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -416,7 +423,7 @@ export default function Workspace(props) {
                     ))}
                 </List>
                 <Divider />
-                <StyledAddButton onClick={()=>handleOpenNewProject()}>Add new project</StyledAddButton>
+                <StyledAddButton onClick={() => handleOpenNewProject()}>Add new project</StyledAddButton>
                 <LogOutButton>Log Out</LogOutButton>
             </Drawer>
             <main
@@ -425,7 +432,19 @@ export default function Workspace(props) {
                 })}
             >
                 <div className={classes.drawerHeader} />
-                <Typography variant="h3" >Proyecto de desarrollo web</Typography>
+                <Grid container direction='row' alignItems="flex-start">
+                    <Grid item xs={11}  >
+                        
+                <Typography variant="h3" >{currentProjectTitle}</Typography>  
+                    </Grid>
+                    
+                    <Grid item container xs={1} >
+                        <Button>
+                            <EditIcon></EditIcon>
+                        </Button>
+
+                    </Grid>
+                </Grid>
                 <AddButton>Add new task</AddButton>
                 <Divider />
                 <TasksList tasks={notDone} handleOpenDeleteTask={handleOpenDeleteTask} changeTaskStatus={changeTaskStatus}></TasksList>
@@ -488,6 +507,7 @@ export default function Workspace(props) {
                         value={projectTitle}
                         onChange={(e) => setProjectTitle(e.target.value)}
                     />
+                    <DatePicker isNew={true}></DatePicker>
                 </DialogContent>
                 <DialogActions>
                     <DeleteButton onClick={handleCloseNewProject} variant="contained" color="secondary">
